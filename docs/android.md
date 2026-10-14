@@ -45,7 +45,15 @@ O pacote Android é `com.carlos833.dsides`.
 O template local em `templates/android/template/app/src/main/AndroidManifest.xml`
 parte do Lime 7.9.0 e declara `android:exported="true"` na `MainActivity`, que tem
 o filtro `MAIN`/`LAUNCHER`. Isso permite instalar e abrir o APK em Android 12 ou
-superior com o SDK alvo 33. Ao atualizar o Lime, revise também esse template.
+superior com o SDK alvo 33. O arquivo é registrado como template individual com
+`rename="app/src/main/AndroidManifest.xml"`: o Lime o aplica depois dos templates
+padrão, evitando que a versão sem `exported` prevaleça. Ao atualizar o Lime,
+revise também esse template.
+
+Antes do upload, o workflow extrai o manifesto do APK com `apkanalyzer` e executa
+`scripts/verify-android-manifest.py`. A execução falha se a atividade do launcher
+não tiver `android:exported="true"` ou se algum componente com filtro de intents
+não declarar um valor explícito para `exported`.
 
 ## Conteúdo disponível e limites
 
