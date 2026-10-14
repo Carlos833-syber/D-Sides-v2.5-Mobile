@@ -26,6 +26,30 @@ O projeto usa Lime 7.9.0, OpenFL 9.2.1, Flixel 4.11.0, flixel-addons 2.11.0,
 flixel-ui 2.5.0, hscript 2.5.0 e hxcpp 4.2.1.
 As bibliotecas nativas Android do Lime já acompanham sua distribuição Haxelib.
 
+## Compilar pelo GitHub Actions
+
+O workflow **Android APK** (`.github/workflows/android.yml`) executa em pushes e
+pull requests para `main`. Para iniciar manualmente após integrar o workflow na
+branch padrão:
+
+1. Abra **Actions → Android APK → Run workflow** no GitHub.
+2. Escolha a branch e confirme **Run workflow**.
+3. Aguarde o job **Build ARMv7 + ARM64 APK** terminar.
+4. Baixe `DSides-Android-<número da execução>` em **Artifacts**, extraia o ZIP e
+   instale o APK no aparelho.
+
+O artefato fica disponível por 14 dias. Ele contém um APK de desenvolvimento
+com as duas arquiteturas; não exige secrets de assinatura nem publica releases.
+A chave de desenvolvimento é gerada no runner e pode mudar entre execuções:
+se o Android recusar a atualização por assinatura diferente, será necessário
+remover a instalação anterior (o que apaga seus dados locais).
+
+A automação reutiliza `mise.toml`, `scripts/setup-haxelib.sh` e
+`scripts/build-android.sh`. O SDK é instalado com Java 17, exigido pelas ferramentas
+atuais do Android; a compilação do Lime usa o Java 11 declarado no projeto.
+Falhas de compilação ficam nos logs do job; se nenhum APK for gerado, o upload
+falha em vez de concluir sem um arquivo para download.
+
 ## Controles
 
 - Menus: setas na parte inferior, **OK** confirma e **BACK** volta.

@@ -1,0 +1,72 @@
+name: Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build ARMv7 + ARM64 APK
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    env:
+      HXCPP_COMPILE_THREADS: 2
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      # The current SDK command-line tools need Java 17. Lime uses Java 11 below.
+      - name: Set up Java for Android SDK tools
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install project Android SDK and NDK
+        run: sdkmanager "platforms;android-33" "build-tools;33.0.2" "ndk;21.4.7075529"
+
+      - name: Install Neko
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y neko
+          neko -version
+
+      - name: Install Haxe and Java from mise.toml
+        uses: jdx/mise-action@v3
+
+      - name: Configure build environment
+        shell: bash
+        run: |
+          echo "JAVA_HOME=$(mise where java)" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK=$ANDROID_HOME" >> "$GITHUB_ENV"
+          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/21.4.7075529" >> "$GITHUB_ENV"
+          mkdir -p "$RUNNER_TEMP/haxelib"
+          haxelib setup "$RUNNER_TEMP/haxelib"
+
+      - name: Install pinned Haxe libraries
+        run: bash scripts/setup-haxelib.sh
+
+      - name: Build Android APK
+        run: bash scripts/build-android.sh
+
+      - name: Upload installable APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: DSides-Android-${{ github.run_number }}
+          path: export/release/android/bin/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 14
+          compression-level: 0
