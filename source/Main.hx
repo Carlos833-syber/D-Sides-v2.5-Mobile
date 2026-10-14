@@ -72,6 +72,11 @@ class Main extends Sprite
 		#end
 	
 		ClientPrefs.loadDefaultKeys();
+		#if android
+		FlxG.signals.postGameStart.add(function() {
+			FlxG.plugins.add(new mobile.MobileControls());
+		});
+		#end
 		// fuck you, persistent caching stays ON during sex
 		FlxGraphic.defaultPersist = true;
 		// the reason for this is we're going to be handling our own cache smartly

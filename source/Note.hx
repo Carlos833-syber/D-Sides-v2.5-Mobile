@@ -89,6 +89,11 @@ class Note extends FlxSprite
 
 		if(noteData > -1 && noteType != value) {
 			switch(value) {
+				#if android
+				case 'Blammed Notes':
+					texture = 'Blammed';
+					missHealth = 0.6;
+				#end
 				case 'Hurt Note':
 					hitbox*=.75;
 					ignoreNote = mustPress;

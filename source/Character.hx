@@ -122,9 +122,9 @@ class Character extends FlxSprite
 				var rawJson:Null<String> = null;
 				try{
 				#if MODS_ALLOWED
-					var rawJson = File.getContent(path);
+					rawJson = File.getContent(path);
 				#else
-				var rawJson = Assets.getText(path);
+				rawJson = Assets.getText(path);
 				#end
 			}catch(e:Any){
 				trace(e);
@@ -133,7 +133,7 @@ class Character extends FlxSprite
 				trace(Assets.exists(path), path);
 				if(rawJson==null){
 					path = Paths.getPreloadPath('characters/' + DEFAULT_CHARACTER + '.json');
-					rawJson = File.getContent(path);
+					rawJson = Assets.getText(path);
 				}
 
 

@@ -252,6 +252,10 @@ class PlayState extends MusicBeatState
 	var blackFade:FlxSprite;
 	var peoplelol:BGSprite;
 	var fireworkslol:FlxSprite;
+	#if android
+	var androidBoppers:Array<BGSprite> = [];
+	var androidAudience:BGSprite;
+	#end
 	var limoFireworks:FlxTypedGroup<FlxSprite>;
 	var eggballs:FlxSprite;
 	var audience:FNFSprite;
@@ -482,6 +486,31 @@ class PlayState extends MusicBeatState
 
 		switch (curStage)
 		{
+			#if android
+			// Bundled desktop Lua stages are reproduced here for the Android target.
+			case 'W1_stage', 'W1_stageDARK':
+				var dark = curStage == 'W1_stageDARK';
+				add(new BGSprite(dark ? 'W1/stagebackdark' : 'W1/stageback', -671, -170));
+				add(new BGSprite(dark ? 'W1/stagefrontDark' : 'W1/stagefront', -579, 681));
+				if (dark) {
+					androidAudience = new BGSprite('W1/Week1Audience', -451, 581, 1, 1, ['Audience'], true);
+					androidBoppers.push(androidAudience);
+				}
+			case 'W5_stage':
+				add(new BGSprite('W5/bgWalls', -1199, -861, 0.6, 0.6));
+				add(new BGSprite('W5/bgEscalator', -1372, -802, 0.5, 0.1));
+				var upper = new BGSprite('W5/upperBop', -237, 214, 0.5, 0.1, ['Upper Crowd Bop'], true);
+				add(upper);
+				androidBoppers.push(upper);
+				add(new BGSprite('W5/christmasTree', 298, -307, 0.6, 0.6));
+				var lower = new BGSprite('W5/bottomBop', -153, 19, 1, 1, ['Bottom Level Boppers'], true);
+				add(lower);
+				androidBoppers.push(lower);
+				add(new BGSprite('W5/fgSnow', -581, 675));
+				var springtrap = new BGSprite('W5/santa', -861, 158, 1, 1, ['santa idle in fear'], true);
+				add(springtrap);
+				androidBoppers.push(springtrap);
+			#end
 			case 'stage': //Week 1
 				var bg:BGSprite = new BGSprite('stageback', -600, -200, 0.9, 0.9);
 				add(bg);
@@ -764,7 +793,7 @@ class PlayState extends MusicBeatState
 				CoolUtil.precacheSound('Lights_Shut_off');
 
 			case 'W5_stage_Feaster':
-				var bg:BGSprite = new BGSprite('W5/evilbg', -601, -641, 0.5, 0.5);
+				var bg:BGSprite = new BGSprite('W5/evilBG', -601, -641, 0.5, 0.5);
 				add(bg);
 
 				audience2 = new BGSprite('W5/evilupperBop', -181, 254, 0.5, 0.5, ['Upper Crowd BobEvil']);
@@ -795,7 +824,7 @@ class PlayState extends MusicBeatState
 				audience.addOffset('singLEFT',9,-5);
 				add(audience);
 
-				var floor:BGSprite = new BGSprite('W5/evilsnow', -581,675, 1, 1);
+				var floor:BGSprite = new BGSprite('W5/evilSnow', -581,675, 1, 1);
 				add(floor);
 
 				springy = new BGSprite('W5/evilsanta', -753, 19, 1, 1, ['santa idle in fear']);
@@ -920,6 +949,9 @@ class PlayState extends MusicBeatState
 
 		add(dadGroup);
 		add(boyfriendGroup);
+		#if android
+		if (androidAudience != null) add(androidAudience);
+		#end
 
 		frozenBF = new FlxSprite(BF_X,BF_Y);
 		frozenBF.frames = Paths.getSparrowAtlas("snowgrave");
@@ -2184,8 +2216,8 @@ class PlayState extends MusicBeatState
 
 		var songName:String = Paths.formatToSongPath(SONG.song);
 		var file:String = Paths.json(songName + '/events');
-		#if sys
-		if (FileSystem.exists(Paths.modsJson(songName + '/events')) || FileSystem.exists(file)) {
+		#if MODS_ALLOWED
+		if (FileSystem.exists(Paths.modsJson(songName + '/events')) || OpenFlAssets.exists(file)) {
 		#else
 		if (OpenFlAssets.exists(file)) {
 		#end
@@ -3192,6 +3224,12 @@ YOUR SOUL'S NO LONGER YOURS TO SAVE
 
 	public function triggerEventNote(eventName:String, value1:String, value2:String) {
 		switch(eventName) {
+			#if android
+			case 'Flash Camera':
+				var duration = Std.parseFloat(value1);
+				if (Math.isNaN(duration) || duration <= 0) duration = 0.5;
+				if (ClientPrefs.flashing) camHUD.flash(FlxColor.WHITE, duration);
+			#end
 			case 'Hey!':
 				var value:Int = 2;
 				switch(value1.toLowerCase().trim()) {
@@ -4037,9 +4075,12 @@ BUT NOW THE SONG LIST HAS MY TUNE
 	{
 		var eventKey:FlxKey = event.keyCode;
 		var key:Int = getKeyFromEvent(eventKey);
-		//trace('Pressed: ' + eventKey);
+		if (FlxG.keys.checkStatus(eventKey, JUST_PRESSED)) pressLane(key);
+	}
 
-		if (!cpuControlled && !paused && key > -1 && (FlxG.keys.checkStatus(eventKey, JUST_PRESSED) || ClientPrefs.controllerMode))
+	private function pressLane(key:Int):Void
+	{
+		if (!cpuControlled && !paused && !inCutscene && key >= 0 && key < 4)
 		{
 			if(freezeCounter>0){
 				var keyToPress = 3*(freezeCounter-1)%2; // left then right
@@ -4156,7 +4197,12 @@ BUT NOW THE SONG LIST HAS MY TUNE
 	{
 		var eventKey:FlxKey = event.keyCode;
 		var key:Int = getKeyFromEvent(eventKey);
-		if(!cpuControlled && !paused && key > -1)
+		releaseLane(key);
+	}
+
+	private function releaseLane(key:Int):Void
+	{
+		if(!cpuControlled && !paused && key >= 0 && key < 4)
 		{
 			var spr:StrumNote = playerStrums.members[key];
 			if(spr != null)
@@ -4199,15 +4245,18 @@ BUT NOW THE SONG LIST HAS MY TUNE
 		var controlHoldArray:Array<Bool> = [left, down, up, right];
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode)
+		if(ClientPrefs.controllerMode #if android || true #end)
 		{
 			var controlArray:Array<Bool> = [controls.NOTE_LEFT_P, controls.NOTE_DOWN_P, controls.NOTE_UP_P, controls.NOTE_RIGHT_P];
+			#if android
+			if (!ClientPrefs.controllerMode) controlArray = [for (action in ['note_left', 'note_down', 'note_up', 'note_right']) mobile.MobileControls.check(action + '-press')];
+			#end
 			if(controlArray.contains(true))
 			{
 				for (i in 0...controlArray.length)
 				{
 					if(controlArray[i])
-						onKeyPress(new KeyboardEvent(KeyboardEvent.KEY_DOWN, true, true, -1, keysArray[i][0]));
+						pressLane(i);
 				}
 			}
 		}
@@ -4240,15 +4289,18 @@ BUT NOW THE SONG LIST HAS MY TUNE
 		}
 
 		// TO DO: Find a better way to handle controller inputs, this should work for now
-		if(ClientPrefs.controllerMode)
+		if(ClientPrefs.controllerMode #if android || true #end)
 		{
 			var controlArray:Array<Bool> = [controls.NOTE_LEFT_R, controls.NOTE_DOWN_R, controls.NOTE_UP_R, controls.NOTE_RIGHT_R];
+			#if android
+			if (!ClientPrefs.controllerMode) controlArray = [for (action in ['note_left', 'note_down', 'note_up', 'note_right']) mobile.MobileControls.check(action + '-release')];
+			#end
 			if(controlArray.contains(true))
 			{
 				for (i in 0...controlArray.length)
 				{
 					if(controlArray[i])
-						onKeyRelease(new KeyboardEvent(KeyboardEvent.KEY_UP, true, true, -1, keysArray[i][0]));
+						releaseLane(i);
 				}
 			}
 		}
@@ -4295,6 +4347,9 @@ BUT NOW THE SONG LIST HAS MY TUNE
 			char.playAnim(animToPlay, true);
 		}
 
+		#if android
+		if (daNote.noteType == 'Blammed Notes') androidBlammed(daNote.noteData, true);
+		#end
 		callOnLuas('noteMiss', [notes.members.indexOf(daNote), daNote.noteData, daNote.noteType, daNote.isSustainNote]);
 	}
 
@@ -4394,6 +4449,16 @@ BUT NOW THE SONG LIST HAS MY TUNE
 			note.destroy();
 		}
 	}
+
+	#if android
+	function androidBlammed(lane:Int, missed:Bool):Void
+	{
+		triggerEventNote('Play Animation', 'shoot', '0');
+		triggerEventNote('Screen Shake', '0.25, 0.0025', '0');
+		if (missed) FlxG.sound.play(Paths.sound('gun'));
+		else triggerEventNote('Play Animation', ['Dodge left', 'Dodge down', 'Dodge up', 'Dodge right'][lane], '1');
+	}
+	#end
 
 	function goodNoteHit(note:Note):Void
 	{
@@ -4524,6 +4589,9 @@ BUT NOW THE SONG LIST HAS MY TUNE
 			var isSus:Bool = note.isSustainNote; //GET OUT OF MY HEAD, GET OUT OF MY HEAD, GET OUT OF MY HEAD
 			var leData:Int = Math.round(Math.abs(note.noteData));
 			var leType:String = note.noteType;
+			#if android
+			if (leType == 'Blammed Notes') androidBlammed(leData, false);
+			#end
 			callOnLuas('goodNoteHit', [notes.members.indexOf(note), leData, leType, isSus]);
 
 			if (!note.isSustainNote)
@@ -4824,6 +4892,10 @@ BUT NOW THE SONG LIST HAS MY TUNE
 								}
 					}
 			}
+		#if android
+		if (Paths.formatToSongPath(SONG.song) == 'bopeebo' && curStep % 32 == 28)
+			triggerEventNote('Hey!', '', '');
+		#end
 		setOnLuas('curStep', curStep);
 		callOnLuas('onStepHit', []);
 	}
@@ -4851,6 +4923,9 @@ BUT NOW THE SONG LIST HAS MY TUNE
 			return;
 		}
 
+		#if android
+		for (bopper in androidBoppers) bopper.dance(true);
+		#end
 		if (generatedMusic)
 		{
 			notes.sort(FlxSort.byY, ClientPrefs.downScroll ? FlxSort.ASCENDING : FlxSort.DESCENDING);

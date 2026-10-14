@@ -13,7 +13,7 @@ import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 import lime.utils.Assets;
 import flixel.FlxSprite;
-#if MODS_ALLOWED
+#if (sys && !android)
 import sys.io.File;
 import sys.FileSystem;
 #end
@@ -205,14 +205,14 @@ class Paths
 	inline static public function voices(song:String):Any
 	{
 		var songKey:String = '${song.toLowerCase().replace(' ', '-')}/Voices';
-		var voices = returnSound('songs', songKey);
+		var voices = returnSound('songs', songKey, 'songs');
 		return voices;
 	}
 
 	inline static public function inst(song:String):Any
 	{
 		var songKey:String = '${song.toLowerCase().replace(' ', '-')}/Inst';
-		var inst = returnSound('songs', songKey);
+		var inst = returnSound('songs', songKey, 'songs');
 		return inst;
 	}
 
@@ -225,7 +225,7 @@ class Paths
 
 	static public function getTextFromFile(key:String, ?ignoreMods:Bool = false):String
 	{
-		#if sys
+		#if (sys && !android)
 		#if MODS_ALLOWED
 		if (!ignoreMods && FileSystem.exists(modFolders(key)))
 			return File.getContent(modFolders(key));
@@ -352,14 +352,15 @@ class Paths
 		}
 		#end
 		// I hate this so god damn much
-		var gottenPath:String = getPath('$path/$key.$SOUND_EXT', SOUND, library);
+		var assetKey = library == 'songs' ? '$key.$SOUND_EXT' : '$path/$key.$SOUND_EXT';
+		var gottenPath:String = getPath(assetKey, SOUND, library);
 		gottenPath = gottenPath.substring(gottenPath.indexOf(':') + 1, gottenPath.length);
 		// trace(gottenPath);
 		if(!currentTrackedSounds.exists(gottenPath))
 		#if MODS_ALLOWED
 			currentTrackedSounds.set(gottenPath, Sound.fromFile('./' + gottenPath));
 		#else
-			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(getPath('$path/$key.$SOUND_EXT', SOUND, library)));
+			currentTrackedSounds.set(gottenPath, OpenFlAssets.getSound(getPath(assetKey, SOUND, library)));
 		#end
 		localTrackedAssets.push(key);
 		return currentTrackedSounds.get(gottenPath);

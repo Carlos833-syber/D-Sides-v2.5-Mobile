@@ -80,6 +80,11 @@ class StageData {
 		{
 			return null;
 		}
-		return cast Json.parse(rawJson);
+		var stageFile:StageFile = cast Json.parse(rawJson);
+			#if android
+			// W5 is a folder within the shared library, not a registered library.
+			if (stageFile.directory == 'W5') stageFile.directory = 'shared';
+			#end
+			return stageFile;
 	}
 }

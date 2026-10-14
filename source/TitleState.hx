@@ -170,7 +170,7 @@ class TitleState extends MusicBeatState
 		swagShader = new ColorSwap();
 		super.create();
 
-		FlxG.save.bind('funkin', 'ninjamuffin99');
+		FlxG.save.bind(#if android 'dsides-mobile' #else 'funkin' #end, 'ninjamuffin99');
 
 		if(!initialized && FlxG.save.data != null && FlxG.save.data.fullscreen)
 		{
@@ -393,7 +393,7 @@ class TitleState extends MusicBeatState
 
 		var pressedEnter:Bool = FlxG.keys.justPressed.ENTER || controls.ACCEPT;
 
-		#if mobile
+		#if (mobile && !android)
 		for (touch in FlxG.touches.list)
 		{
 			if (touch.justPressed)

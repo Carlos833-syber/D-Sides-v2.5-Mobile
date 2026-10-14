@@ -160,142 +160,142 @@ class Controls extends FlxActionSet
 	public var UI_UP(get, never):Bool;
 
 	inline function get_UI_UP()
-		return _ui_up.check();
+		return _ui_up.check() #if android || mobile.MobileControls.check("ui_up") #end;
 
 	public var UI_LEFT(get, never):Bool;
 
 	inline function get_UI_LEFT()
-		return _ui_left.check();
+		return _ui_left.check() #if android || mobile.MobileControls.check("ui_left") #end;
 
 	public var UI_RIGHT(get, never):Bool;
 
 	inline function get_UI_RIGHT()
-		return _ui_right.check();
+		return _ui_right.check() #if android || mobile.MobileControls.check("ui_right") #end;
 
 	public var UI_DOWN(get, never):Bool;
 
 	inline function get_UI_DOWN()
-		return _ui_down.check();
+		return _ui_down.check() #if android || mobile.MobileControls.check("ui_down") #end;
 
 	public var UI_UP_P(get, never):Bool;
 
 	inline function get_UI_UP_P()
-		return _ui_upP.check();
+		return _ui_upP.check() #if android || mobile.MobileControls.check("ui_up-press") #end;
 
 	public var UI_LEFT_P(get, never):Bool;
 
 	inline function get_UI_LEFT_P()
-		return _ui_leftP.check();
+		return _ui_leftP.check() #if android || mobile.MobileControls.check("ui_left-press") #end;
 
 	public var UI_RIGHT_P(get, never):Bool;
 
 	inline function get_UI_RIGHT_P()
-		return _ui_rightP.check();
+		return _ui_rightP.check() #if android || mobile.MobileControls.check("ui_right-press") #end;
 
 	public var UI_DOWN_P(get, never):Bool;
 
 	inline function get_UI_DOWN_P()
-		return _ui_downP.check();
+		return _ui_downP.check() #if android || mobile.MobileControls.check("ui_down-press") #end;
 
 	public var UI_UP_R(get, never):Bool;
 
 	inline function get_UI_UP_R()
-		return _ui_upR.check();
+		return _ui_upR.check() #if android || mobile.MobileControls.check("ui_up-release") #end;
 
 	public var UI_LEFT_R(get, never):Bool;
 
 	inline function get_UI_LEFT_R()
-		return _ui_leftR.check();
+		return _ui_leftR.check() #if android || mobile.MobileControls.check("ui_left-release") #end;
 
 	public var UI_RIGHT_R(get, never):Bool;
 
 	inline function get_UI_RIGHT_R()
-		return _ui_rightR.check();
+		return _ui_rightR.check() #if android || mobile.MobileControls.check("ui_right-release") #end;
 
 	public var UI_DOWN_R(get, never):Bool;
 
 	inline function get_UI_DOWN_R()
-		return _ui_downR.check();
+		return _ui_downR.check() #if android || mobile.MobileControls.check("ui_down-release") #end;
 
 	public var NOTE_UP(get, never):Bool;
 
 	inline function get_NOTE_UP()
-		return _note_up.check();
+		return _note_up.check() #if android || mobile.MobileControls.check("note_up") #end;
 
 	public var NOTE_LEFT(get, never):Bool;
 
 	inline function get_NOTE_LEFT()
-		return _note_left.check();
+		return _note_left.check() #if android || mobile.MobileControls.check("note_left") #end;
 
 	public var NOTE_RIGHT(get, never):Bool;
 
 	inline function get_NOTE_RIGHT()
-		return _note_right.check();
+		return _note_right.check() #if android || mobile.MobileControls.check("note_right") #end;
 
 	public var NOTE_DOWN(get, never):Bool;
 
 	inline function get_NOTE_DOWN()
-		return _note_down.check();
+		return _note_down.check() #if android || mobile.MobileControls.check("note_down") #end;
 
 	public var NOTE_UP_P(get, never):Bool;
 
 	inline function get_NOTE_UP_P()
-		return _note_upP.check();
+		return _note_upP.check() #if android || mobile.MobileControls.check("note_up-press") #end;
 
 	public var NOTE_LEFT_P(get, never):Bool;
 
 	inline function get_NOTE_LEFT_P()
-		return _note_leftP.check();
+		return _note_leftP.check() #if android || mobile.MobileControls.check("note_left-press") #end;
 
 	public var NOTE_RIGHT_P(get, never):Bool;
 
 	inline function get_NOTE_RIGHT_P()
-		return _note_rightP.check();
+		return _note_rightP.check() #if android || mobile.MobileControls.check("note_right-press") #end;
 
 	public var NOTE_DOWN_P(get, never):Bool;
 
 	inline function get_NOTE_DOWN_P()
-		return _note_downP.check();
+		return _note_downP.check() #if android || mobile.MobileControls.check("note_down-press") #end;
 
 	public var NOTE_UP_R(get, never):Bool;
 
 	inline function get_NOTE_UP_R()
-		return _note_upR.check();
+		return _note_upR.check() #if android || mobile.MobileControls.check("note_up-release") #end;
 
 	public var NOTE_LEFT_R(get, never):Bool;
 
 	inline function get_NOTE_LEFT_R()
-		return _note_leftR.check();
+		return _note_leftR.check() #if android || mobile.MobileControls.check("note_left-release") #end;
 
 	public var NOTE_RIGHT_R(get, never):Bool;
 
 	inline function get_NOTE_RIGHT_R()
-		return _note_rightR.check();
+		return _note_rightR.check() #if android || mobile.MobileControls.check("note_right-release") #end;
 
 	public var NOTE_DOWN_R(get, never):Bool;
 
 	inline function get_NOTE_DOWN_R()
-		return _note_downR.check();
+		return _note_downR.check() #if android || mobile.MobileControls.check("note_down-release") #end;
 
 	public var ACCEPT(get, never):Bool;
 
 	inline function get_ACCEPT()
-		return _accept.check();
+		return _accept.check() #if android || mobile.MobileControls.check("accept") #end;
 
 	public var BACK(get, never):Bool;
 
 	inline function get_BACK()
-		return _back.check();
+		return _back.check() #if android || mobile.MobileControls.check("back") #end;
 
 	public var PAUSE(get, never):Bool;
 
 	inline function get_PAUSE()
-		return _pause.check();
+		return _pause.check() #if android || mobile.MobileControls.check("pause") #end;
 
 	public var RESET(get, never):Bool;
 
 	inline function get_RESET()
-		return _reset.check();
+		return _reset.check() #if android || mobile.MobileControls.check("reset") #end;
 
 	#if (haxe >= "4.0.0")
 	public function new(name, scheme = None)
