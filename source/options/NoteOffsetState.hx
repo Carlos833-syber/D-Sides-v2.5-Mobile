@@ -214,10 +214,10 @@ class NoteOffsetState extends MusicBeatState
 		if(onComboMenu)
 		{
 			var controlArray:Array<Bool> = [
-				FlxG.keys.justPressed.LEFT,
-				FlxG.keys.justPressed.RIGHT,
-				FlxG.keys.justPressed.UP,
-				FlxG.keys.justPressed.DOWN,
+				controls.UI_LEFT_P,
+				controls.UI_RIGHT_P,
+				controls.UI_UP_P,
+				controls.UI_DOWN_P,
 			
 				FlxG.keys.justPressed.A,
 				FlxG.keys.justPressed.D,
