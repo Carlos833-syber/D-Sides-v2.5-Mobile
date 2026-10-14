@@ -7,6 +7,9 @@
 	<!-- Android uses an app-specific save namespace and lazy asset libraries. -->
 	<config:android minimum-sdk-version="21" target-sdk-version="33" build-sdk-version="33" build-tools-version="33.0.2" />
 
+	<!-- Lime 7.9.0 needs an explicit exported launcher for Android 12+. -->
+	<template path="templates" if="android" />
+
 	<!--Switch Export with Unique ApplicationID and Icon-->
 	<set name="APP_ID" value="0x0100f6c013bbc000" />
 

@@ -34,13 +34,18 @@ As bibliotecas nativas Android do Lime já acompanham sua distribuição Haxelib
 - **PAUSE** abre o menu de pausa; use **OK** para selecionar a opção de retomar.
 - Diálogos e tela de derrota usam **OK** e **BACK**.
 - Teclado e controle físico continuam disponíveis. Para controle físico, ative
-  *Controller Mode* em *Gameplay*.
+  _Controller Mode_ em _Gameplay_.
 - A configuração de teclas foi ocultada no Android; os controles de toque são fixos.
 
 Músicas e cenários são carregados por biblioteca quando necessários, em vez de
 pré-carregar todas as semanas na inicialização. Os arquivos empacotados são lidos
 pela API de assets do OpenFL/Lime, sem exigir acesso ao armazenamento compartilhado.
 O pacote Android é `com.carlos833.dsides`.
+
+O template local em `templates/android/template/app/src/main/AndroidManifest.xml`
+parte do Lime 7.9.0 e declara `android:exported="true"` na `MainActivity`, que tem
+o filtro `MAIN`/`LAUNCHER`. Isso permite instalar e abrir o APK em Android 12 ou
+superior com o SDK alvo 33. Ao atualizar o Lime, revise também esse template.
 
 ## Conteúdo disponível e limites
 
